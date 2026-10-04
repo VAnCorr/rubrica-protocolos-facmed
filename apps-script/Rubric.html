@@ -1,0 +1,215 @@
+<script>
+(function (root) {
+  'use strict';
+  const title = "LISTA DE COTEJO PARA PROTOCOLO DE INVESTIGACIÓN";
+  const version = 'protocolo-registro-2026-1.0';
+  const criteria = [
+  {
+    "id": "portada",
+    "title": "Portada y estética general del documento",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "indice",
+    "title": "Índice (índice de contenido)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "introduccion",
+    "title": "Introducción (1-2 páginas. De lo general a lo particular)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "antecedentes",
+    "title": "Antecedentes (Mínimo 4 referencias actuales 5 años)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "justificacion",
+    "title": "Justificación (Da salida a los parámetros establecidos)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "problema",
+    "title": "Planteamiento del problema (Caracteriza y fundamenta el problema)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "objetivos",
+    "title": "Objetivo general y objetivos específicos (Son congruentes y medibles) + hipótesis (si aplica)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "marco",
+    "title": "Marco teórico o de referencia (De 12 a 20 páginas, con referencias bibliográficas Vancouver.)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "tipo",
+    "title": "Tipo de estudio",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "area",
+    "title": "Área de estudio",
+    "max": 2,
+    "group": 1
+  },
+  {
+    "id": "poblacion",
+    "title": "Universo y/o población a estudio",
+    "max": 2,
+    "group": 1
+  },
+  {
+    "id": "unidad",
+    "title": "Unidad de análisis",
+    "max": 2,
+    "group": 1
+  },
+  {
+    "id": "muestra",
+    "title": "Muestra y muestreo",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "seleccion",
+    "title": "Criterios de selección",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "variables",
+    "title": "Lista de variables",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "operacionalizacion",
+    "title": "Operacionalización de variables",
+    "max": 5,
+    "group": 1
+  },
+  {
+    "id": "recoleccion",
+    "title": "Procedimiento de recolección de información (fuente, técnica y plan de recolección)",
+    "max": 5,
+    "group": 1
+  },
+  {
+    "id": "confiabilidad",
+    "title": "Confiabilidad y validez del instrumento",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "analisis",
+    "title": "Procesamiento y análisis de los datos",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "etica",
+    "title": "Consideraciones éticas",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "limitaciones",
+    "title": "Limitaciones",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "bibliografia",
+    "title": "Bibliografía (Vancouver)",
+    "max": 6,
+    "group": 2
+  },
+  {
+    "id": "instrumento",
+    "title": "Anexo 1: Instrumento de recolección de información y consentimiento informado (si aplica)",
+    "max": 6,
+    "group": 2
+  },
+  {
+    "id": "cronograma",
+    "title": "Anexos 2: Cronograma de trabajo",
+    "max": 4,
+    "group": 2
+  },
+  {
+    "id": "presupuesto",
+    "title": "Anexos 3: Presupuesto",
+    "max": 4,
+    "group": 2
+  }
+];
+  const groupMax = [40, 40, 20];
+  function calculate(scores) {
+    if (!scores || typeof scores !== 'object') throw new Error('Faltan las notas.');
+    const subtotals = [0, 0, 0];
+    criteria.forEach(c => {
+      const n = scores[c.id];
+      if (typeof n !== 'number' || !Number.isFinite(n) || n < 0 || n > c.max) throw new Error('Revise la nota de ' + c.title + '.');
+      subtotals[c.group] += n;
+    });
+    const total = subtotals.reduce((a, b) => a + b, 0);
+    return {total, note: total, subtotals};
+  }
+  function text(value, label, limit, required) {
+    if (typeof value !== 'string' || value.length > limit || (required && !value.trim())) throw new Error('Revise ' + label + '.');
+    return value.trim();
+  }
+  function validate(payload) {
+    if (!payload || payload.confirmed !== true) throw new Error('Debe confirmar la autoría de la evaluación.');
+    if (payload.rubricVersion && payload.rubricVersion !== version) throw new Error('La lista de cotejo cambió. Recargue el formulario antes de enviar.');
+    const result = calculate(payload.scores);
+    const checks = {}, comments = {};
+    criteria.forEach(c => {
+      const check = (payload.checks || {})[c.id];
+      if (!['SI', 'NO'].includes(check)) throw new Error('Marque SI o NO en ' + c.title + '.');
+      checks[c.id] = check;
+      comments[c.id] = text((payload.comments || {})[c.id] || '', 'las observaciones de ' + c.title, 2000, false);
+    });
+    return Object.assign(result, {
+      rubricVersion: version,
+      evaluator: text(payload.evaluator, 'el nombre del jurado', 150, true),
+      scores: Object.fromEntries(criteria.map(c => [c.id, payload.scores[c.id]])),
+      checks, comments,
+      strengths: text(payload.strengths || '', 'las fortalezas', 4000, false),
+      improvements: text(payload.improvements || '', 'las mejoras prioritarias', 4000, false),
+      observations: text(payload.observations || '', 'las observaciones generales', 4000, false),
+      confirmed: true
+    });
+  }
+  function latest(evaluations) {
+    const map = new Map();
+    evaluations.filter(e => e.status === 'COMPLETE' && e.data.rubricVersion === version).forEach(e => {
+      const key = e.sessionId + ':' + e.jurorId;
+      if (!map.has(key) || e.revision > map.get(key).revision) map.set(key, e);
+    });
+    return Array.from(map.values());
+  }
+  function summarize(evaluations, expected) {
+    const active = latest(evaluations);
+    const averages = {};
+    criteria.forEach(c => { averages[c.id] = active.length ? active.reduce((n, e) => n + e.data.scores[c.id], 0) / active.length : null; });
+    return {received: active.length, pending: Math.max(0, expected - active.length), averages, note: active.length ? active.reduce((n, e) => n + e.data.note, 0) / active.length : null};
+  }
+  function safeCell(value) {
+    return typeof value === 'string' && /^[\s]*[=+@-]/.test(value) ? "'" + value : value;
+  }
+  root.Rubric = {title, version, criteria, groupMax, calculate, validate, latest, summarize, safeCell};
+})(typeof globalThis === 'object' ? globalThis : this);
+</script>

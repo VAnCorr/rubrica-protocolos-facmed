@@ -1,0 +1,167 @@
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  let token = '', context = null, savedPayload = null, busy = false, draftKey = '', revisionCounter = 0;
+  const api = (name, ...args) => new Promise((resolve, reject) => {
+    if (window.DEMO_API) return Promise.resolve().then(() => window.DEMO_API[name](...args)).then(resolve, reject);
+    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args);
+  });
+  function message(text, kind) {
+    $('message').className = 'status' + (kind ? ' ' + kind : '');
+    $('message').textContent = text;
+    $('message').hidden = false;
+  }
+  function value(id) { return $(id).value; }
+  function payload() {
+    const scores = {}, checks = {};
+    Rubric.criteria.forEach(c => { const raw = value('score-' + c.id); scores[c.id] = raw === '' ? null : Number(raw); checks[c.id] = (document.querySelector('input[name="check-' + c.id + '"]:checked') || {}).value || null; });
+    return {rubricVersion: Rubric.version, evaluator: value('evaluator'), scores, checks, comments: {}, strengths: '', improvements: '', observations: value('observations'), confirmed: true};
+  }
+  function restore(data) {
+    Rubric.criteria.forEach(c => {
+      $('score-' + c.id).value = data.scores && data.scores[c.id] !== null && data.scores[c.id] !== undefined ? data.scores[c.id] : '';
+      ['SI', 'NO'].forEach(check => { $('check-' + c.id + '-' + check).checked = (data.checks || {})[c.id] === check; });
+    });
+    $('observations').value = data.observations || '';
+    updateTotals();
+  }
+  function updateTotals() {
+    let sum = 0, completed = 0; const subtotals = [0, 0, 0];
+    Rubric.criteria.forEach(c => {
+      const input = $('score-' + c.id), raw = input.value, n = Number(raw);
+      if (raw !== '' && Number.isFinite(n) && n >= 0 && n <= c.max) { sum += n; subtotals[c.group] += n; if (document.querySelector('input[name="check-' + c.id + '"]:checked')) completed++; }
+    });
+    $('total').textContent = Number(sum.toFixed(2)); $('tableTotal').textContent = sum.toFixed(2);
+    $('normalized').textContent = 'TOTAL 100%' + (completed < Rubric.criteria.length ? ' · parcial' : '');
+    $('progressBar').style.width = completed / Rubric.criteria.length * 100 + '%';
+    $('progressText').textContent = completed + ' de ' + Rubric.criteria.length + ' indicadores';
+    $('stickyProgress').textContent = completed + '/' + Rubric.criteria.length; $('stickyTotal').textContent = Number(sum.toFixed(2)) + ' / 100';
+    subtotals.forEach((n, group) => { $('subtotal-' + group).textContent = n.toFixed(2); });
+  }
+  function saveDraft() {
+    revisionCounter++;
+    updateTotals();
+    if (context && !context.evaluation && !busy) {
+      try { localStorage.setItem(draftKey, JSON.stringify(payload())); $('draftStatus').textContent = 'Borrador guardado en este navegador · ' + new Date().toLocaleTimeString('es-NI'); }
+      catch (_) { $('draftStatus').textContent = 'Este navegador no permite guardar el borrador. Mantenga abierta esta pestaña hasta enviar.'; }
+    }
+    $('reviewSection').hidden = true; $('confirmed').checked = false;
+  }
+  function setLocked(locked) {
+    $('evaluationForm').querySelectorAll('input,textarea,button').forEach(el => { el.disabled = locked; });
+    $('sendButton').disabled = locked; $('editButton').disabled = locked;
+  }
+  function renderCriteria() {
+    const container = $('criteria'); container.replaceChildren();
+    Rubric.criteria.forEach((c, index) => {
+      const row = document.createElement('tr');
+      const indicator = row.insertCell(); indicator.textContent = c.title;
+      row.insertCell().textContent = c.max + '%';
+      ['SI', 'NO'].forEach(check => {
+        const cell = row.insertCell(), input = document.createElement('input');
+        input.type = 'radio'; input.name = 'check-' + c.id; input.id = 'check-' + c.id + '-' + check; input.value = check; input.required = true;
+        input.setAttribute('aria-label', check + ': ' + c.title); cell.appendChild(input);
+      });
+      const cell = row.insertCell(), input = document.createElement('input');
+      input.type = 'number'; input.id = 'score-' + c.id; input.min = '0'; input.max = c.max; input.step = 'any'; input.required = true; input.inputMode = 'decimal';
+      input.setAttribute('aria-label', 'NOTA: ' + c.title + ', máximo ' + c.max); cell.appendChild(input); container.appendChild(row);
+      const next = Rubric.criteria[index + 1];
+      if (!next || next.group !== c.group) {
+        const subtotal = document.createElement('tr'); subtotal.className = 'subtotal';
+        const label = document.createElement('th'); label.scope = 'row'; label.textContent = 'SUB TOTAL'; subtotal.appendChild(label);
+        subtotal.insertCell().textContent = Rubric.groupMax[c.group] + '%'; subtotal.insertCell(); subtotal.insertCell();
+        const score = subtotal.insertCell(); score.id = 'subtotal-' + c.group; score.textContent = '0.00'; container.appendChild(subtotal);
+      }
+    });
+  }
+  function receipt(evaluation) {
+    context.evaluation = evaluation; savedPayload = evaluation.data; restore(evaluation.data); setLocked(true);
+    $('reviewSection').hidden = true; $('receipt').hidden = false;
+    const complete = evaluation.status === 'COMPLETE';
+    if (window.DEMO_API) {
+      $('receiptTitle').textContent = 'Evaluación calculada en la vista de prueba';
+      $('receiptDetails').textContent = 'Esta vista permite comprobar la lista de cotejo. No guarda en Drive ni genera PDF.';
+      $('receiptScore').textContent = evaluation.data.total.toFixed(2) + ' / 100 · SUB TOTAL: ' + evaluation.data.subtotals.map((n, i) => n.toFixed(2) + '/' + Rubric.groupMax[i]).join(' · ');
+      $('downloadButton').hidden = true; $('retryButton').hidden = true;
+      message('Prueba terminada. Los datos no se han guardado en Google Drive.', 'pending');
+      $('receipt').focus(); $('receipt').scrollIntoView({behavior: 'smooth', block: 'center'});
+      return;
+    }
+    $('receiptTitle').textContent = complete ? 'Evaluación guardada' : 'Puntajes registrados; PDF pendiente';
+    $('receiptDetails').textContent = complete ? 'Sus puntajes y el PDF están guardados en el Drive del coordinador. Puede descargar su copia.' : 'Sus puntajes están registrados. Reintente para completar el PDF sin duplicar la evaluación.';
+    $('receiptScore').textContent = evaluation.data.total.toFixed(2) + ' / 100 · SUB TOTAL: ' + evaluation.data.subtotals.map((n, i) => n.toFixed(2) + '/' + Rubric.groupMax[i]).join(' · ');
+    $('downloadButton').hidden = !complete; $('retryButton').hidden = complete;
+    message(complete ? 'Guardado confirmado · ' + evaluation.id : 'El guardado está incompleto. Falta generar el PDF.', complete ? '' : 'pending');
+    if (complete) { try { localStorage.removeItem(draftKey); } catch (_) {} }
+    $('receipt').focus(); $('receipt').scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+  async function send() {
+    if (busy) return;
+    if (!context.evaluation && !$('confirmed').checked) { message('Confirme la autoría antes de enviar.', 'error'); $('confirmed').focus(); return; }
+    busy = true; setLocked(true); $('retryButton').disabled = true;
+    message('Guardando los puntajes y generando su PDF. Mantenga esta pestaña abierta…');
+    try { receipt(await api('submitEvaluation', token, savedPayload)); }
+    catch (error) {
+      message(error.message || 'No fue posible confirmar el guardado. Su borrador se conserva. Reintente con este mismo enlace.', 'error');
+      if (!context.evaluation) setLocked(false);
+    } finally { busy = false; $('retryButton').disabled = false; }
+  }
+  async function download() {
+    $('downloadButton').disabled = true; $('downloadStatus').textContent = 'Preparando descarga…';
+    try {
+      const file = await api('downloadPdf', token);
+      const bytes = Uint8Array.from(atob(file.base64), c => c.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], {type: 'application/pdf'}));
+      const link = document.createElement('a'); link.href = url; link.download = file.name; document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      $('downloadStatus').textContent = 'Descarga preparada. Si su navegador solicita permiso, permita descargar el PDF.';
+    } catch (error) { $('downloadStatus').textContent = error.message || 'No se pudo descargar. Vuelva a intentarlo.'; }
+    finally { $('downloadButton').disabled = false; }
+  }
+  async function initialize() {
+    $('reloadButton').hidden = true;
+    try {
+      let locationData;
+      if (window.DEMO_API) locationData = {hash: 'token=' + 'a'.repeat(64), parameter: {}};
+      else locationData = await new Promise(resolve => google.script.url.getLocation(resolve));
+      token = new URLSearchParams((locationData.hash || '').replace(/^#/, '')).get('token') || (locationData.parameter || {}).token || '';
+      if (!/^[a-f0-9]{64}$/.test(token)) throw new Error('Abra el enlace individual que le compartió el coordinador.');
+      context = await api('getContext', token); draftKey = 'facmed-draft:' + Rubric.version + ':' + token;
+      renderCriteria();
+      const session = context.session;
+      $('protocolTitle').textContent = session.title;
+      ['resident', 'program', 'tutor'].forEach(id => { $(id).textContent = session[id]; });
+      $('sessionDate').textContent = session.date; $('evaluator').value = context.juror.name;
+      $('revisionText').textContent = 'Revisión ' + context.juror.revision + ' · Una evaluación por enlace.';
+      $('evaluationApp').hidden = false;
+      if (context.evaluation && context.evaluation.data.rubricVersion !== Rubric.version) { setLocked(true); message('Este enlace tiene una evaluación de la rúbrica anterior. Solicite un nuevo enlace para la lista de cotejo de protocolo.', 'pending'); }
+      else if (context.evaluation) receipt(context.evaluation);
+      else {
+        try { const draft = localStorage.getItem(draftKey); if (draft) restore(JSON.parse(draft)); } catch (_) {}
+        if (!session.open) { setLocked(true); message('Esta sesión está cerrada. Contacte al coordinador.', 'pending'); }
+        else $('message').hidden = true;
+      }
+    } catch (error) { message(error.message || 'No fue posible cargar la evaluación. Compruebe su conexión.', 'error'); $('reloadButton').hidden = false; }
+  }
+  $('evaluationForm').addEventListener('input', saveDraft);
+  $('evaluationForm').addEventListener('submit', event => {
+    event.preventDefault();
+    try {
+      savedPayload = Rubric.validate(payload());
+      const rows = $('reviewRows'); rows.replaceChildren();
+      Rubric.criteria.forEach(c => {
+        const row = rows.insertRow(); row.insertCell().textContent = c.title; row.insertCell().textContent = savedPayload.checks[c.id]; row.insertCell().textContent = savedPayload.scores[c.id] + ' / ' + c.max;
+      });
+      $('reviewTotal').textContent = 'TOTAL: ' + savedPayload.total.toFixed(2) + ' / 100';
+      $('reviewCategory').textContent = 'SUB TOTAL: ' + savedPayload.subtotals.map((n, i) => n.toFixed(2) + ' / ' + Rubric.groupMax[i]).join(' · ');
+      $('confirmed').checked = false; $('reviewSection').hidden = false; $('reviewSection').focus(); $('reviewSection').scrollIntoView({behavior: 'smooth'});
+    } catch (error) { message(error.message, 'error'); }
+  });
+  $('editButton').addEventListener('click', () => { $('reviewSection').hidden = true; $('confirmed').checked = false; $('reviewButton').focus(); });
+  $('sendButton').addEventListener('click', send); $('retryButton').addEventListener('click', send);
+  $('downloadButton').addEventListener('click', download); $('reloadButton').addEventListener('click', initialize);
+  window.addEventListener('beforeunload', event => { if (busy) { event.preventDefault(); event.returnValue = ''; } });
+  initialize();
+})();
+</script>

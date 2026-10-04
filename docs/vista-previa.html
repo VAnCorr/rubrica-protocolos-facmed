@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><style>
+:root{--ink:#173638;--muted:#617574;--accent:#087b66;--line:#d8e6e1;--paper:#fff;--wash:#f3f7f4;--danger:#ac302c;--shadow:0 14px 45px #17363809}*{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.55}button,input,textarea{font:inherit}a{color:var(--accent)}.topbar{background:#123a3b;color:white;padding:18px 24px}.topbar-inner{max-width:1000px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-weight:700;letter-spacing:.07em;font-size:13px}.tag{font-size:12px;padding:4px 10px;border:1px solid #ffffff40;border-radius:30px}main{max-width:1000px;margin:0 auto;padding:38px 22px 80px}.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:700;color:var(--accent);text-transform:uppercase}h1{font-size:clamp(28px,5vw,42px);line-height:1.15;margin:12px 0 18px;letter-spacing:-.035em}h2{font-size:22px;margin:0 0 16px}h3{font-size:18px;margin:0}p{margin:10px 0}.muted{color:var(--muted)}.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow);margin:20px 0}.intro{display:grid;grid-template-columns:1fr 240px;gap:30px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:24px 0 0}.meta dt{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em}.meta dd{margin:4px 0 0;overflow-wrap:anywhere}.scorebox{background:#e7f3ec;border-radius:14px;padding:24px;display:flex;flex-direction:column;justify-content:center}.scorebig{font-size:40px;font-weight:700;letter-spacing:-.03em}.progress{height:6px;border-radius:10px;background:#cfe3d8;overflow:hidden;margin:16px 0 8px}.progress span{display:block;height:100%;background:var(--accent);transition:width .2s}.criterion{display:grid;grid-template-columns:40px 1fr 110px;gap:16px;align-items:start}.number{width:34px;height:34px;background:#e8f2ed;color:var(--accent);display:grid;place-items:center;border-radius:10px;font-weight:700}.criterion p{font-size:14px;color:var(--muted);margin:8px 0 0}.pointlabel{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}.points{text-align:center;width:100%;padding:10px 6px;font-size:22px;font-weight:700}.comment{margin:18px 0 0 56px}label{display:block;font-weight:600;font-size:14px;margin-bottom:7px}input,textarea{border:1px solid #bed1c9;border-radius:9px;background:white;color:var(--ink);padding:12px;width:100%}textarea{resize:vertical;min-height:92px;line-height:1.5}input:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid #97d9c4;outline-offset:2px}input:disabled,textarea:disabled{background:#f5f7f5;color:#617574}input[readonly]{background:#f5f7f5}.help{font-size:12px;color:var(--muted);margin-top:5px}.stack{margin-bottom:20px}.check{display:flex;align-items:flex-start;gap:12px;font-weight:400;font-size:15px}.check input{width:19px;height:19px;flex-shrink:0;margin-top:3px}.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:24px}button,.button{display:inline-block;border:0;border-radius:10px;padding:13px 20px;background:var(--accent);color:white;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}button.secondary{background:#e8f1ec;color:var(--ink)}button:disabled{opacity:.55;cursor:wait}.status{padding:15px 18px;border-radius:10px;background:#e8f3ed;margin:18px 0;overflow-wrap:anywhere}.status.error{color:var(--danger);background:#fff0ed;border:1px solid #f0c4bc}.status.pending{background:#fff5d9;color:#75530d}.hidden,[hidden]{display:none!important}.summarytable{width:100%;border-collapse:collapse;font-size:14px}.summarytable th,.summarytable td{padding:10px 4px;border-bottom:1px solid var(--line);text-align:left}.summarytable td:last-child,.summarytable th:last-child{text-align:right;white-space:nowrap}.footer{font-size:12px;color:var(--muted);margin-top:28px}.draft{font-size:12px;color:var(--muted)}.sticky{position:sticky;bottom:12px;background:#123a3b;color:white;border-radius:12px;padding:12px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center;box-shadow:0 6px 25px #17363820;margin-top:26px}.sticky strong{font-size:19px}.loading{display:flex;gap:12px;align-items:center}.dot{width:12px;height:12px;border-radius:100%;background:var(--accent);animation:pulse 1s infinite alternate}@keyframes pulse{to{opacity:.3}}@media(prefers-reduced-motion:reduce){.dot{animation:none}}@media(max-width:650px){main{padding:26px 14px 45px}.card{padding:20px 16px;border-radius:13px}.intro{grid-template-columns:1fr;gap:20px}.scorebox{padding:18px}.scorebig{font-size:32px}.meta{grid-template-columns:1fr;gap:12px}.criterion{grid-template-columns:30px 1fr 82px;gap:10px}.number{width:28px;height:28px}.criterion h3{font-size:16px}.comment{margin-left:0}.points{font-size:20px}.topbar{padding:14px}.sticky{font-size:13px}.actions button{flex:1}.summarytable{font-size:13px}}
+.checklist-card{padding:0;overflow:hidden}.table-scroll{overflow-x:auto}.checklist{border-collapse:collapse;width:100%;font-size:14px}.checklist th,.checklist td{border-bottom:1px solid var(--line);padding:13px 10px;text-align:center;vertical-align:middle}.checklist th:first-child,.checklist td:first-child{text-align:left;padding-left:20px}.checklist thead th{background:#123a3b;color:#fff;font-size:12px;letter-spacing:.05em;padding-top:16px;padding-bottom:16px}.checklist td:first-child{width:65%;line-height:1.5}.checklist td:nth-child(2){white-space:nowrap;font-weight:600}.checklist .subtotal,.checklist tfoot{background:#e7f3ec;font-weight:700}.checklist input[type=radio]{width:20px;height:20px;accent-color:var(--accent);cursor:pointer}.checklist input[type=number]{width:78px;min-width:64px;padding:9px 6px;text-align:center;font-size:16px}.signature-lines{display:flex;justify-content:space-around;gap:24px;padding:55px 24px 24px;font-size:12px;text-align:center}.signature-lines span{border-top:1px solid #6b8078;padding-top:8px;flex:1}.partial-label{font-size:11px;color:var(--muted)}@media(max-width:650px){.checklist{font-size:12px}.checklist th,.checklist td{padding:10px 5px}.checklist th:first-child,.checklist td:first-child{padding-left:10px}.checklist td:first-child{width:55%;min-width:145px}.checklist input[type=number]{width:60px;min-width:60px;font-size:16px}.checklist input[type=radio]{width:18px;height:18px}.signature-lines{padding:45px 12px 20px;gap:14px;font-size:10px}.summarytable td:last-child{min-width:52px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner"><span class="brand">FACMED · PROTOCOLOS</span><span class="tag">Evaluación por jurado</span></div></header>
+<main><div class="status pending">VISTA DE PRUEBA · Los datos no se guardan en Drive.</div>
+  <div class="eyebrow">Revisión académica</div>
+  <h1>Lista de cotejo para<br>protocolo de investigación</h1>
+  <div id="message" role="status" aria-live="polite" class="status loading"><span class="dot"></span>Comprobando su enlace individual…</div>
+  <button id="reloadButton" class="secondary" hidden>Volver a intentar</button>
+  <section id="evaluationApp" hidden>
+    <section class="card intro" aria-labelledby="sessionTitle">
+      <div><h2 id="sessionTitle">Protocolo</h2><p id="protocolTitle"></p>
+        <dl class="meta"><div><dt>Residente</dt><dd id="resident"></dd></div><div><dt>Programa</dt><dd id="program"></dd></div><div><dt>Tutor</dt><dd id="tutor"></dd></div><div><dt>Fecha de revisión</dt><dd id="sessionDate"></dd></div></dl>
+      </div>
+      <aside class="scorebox"><span class="pointlabel">NOTA TOTAL</span><div class="scorebig"><span id="total">0</span><span style="font-size:18px;font-weight:400"> / 100</span></div><div id="normalized" class="muted">TOTAL 100%</div><div class="progress"><span id="progressBar" style="width:0%"></span></div><span id="progressText" class="help">0 de 25 indicadores</span></aside>
+    </section>
+    <form id="evaluationForm">
+      <section class="card"><label for="evaluator">Jurado evaluador</label><input id="evaluator" name="evaluator" maxlength="150" required readonly><p class="help">Su enlace está asociado a este nombre. Si no corresponde, solicite el enlace correcto.</p><p id="revisionText" class="help"></p></section>
+      <div class="eyebrow" style="margin-top:30px">LISTA DE COTEJO PARA PROTOCOLO DE INVESTIGACIÓN</div>
+      <p class="muted">Marque SI o NO y registre la NOTA de cada indicador. La nota se ingresa por separado, de 0 al porcentaje indicado.</p>
+      <section class="card checklist-card"><div class="table-scroll"><table class="checklist"><thead><tr><th scope="col">INDICADOR</th><th scope="col">%</th><th scope="col">SI</th><th scope="col">NO</th><th scope="col">NOTA</th></tr></thead><tbody id="criteria"></tbody><tfoot><tr><th scope="row">TOTAL</th><td>100%</td><td></td><td></td><td id="tableTotal">0.00</td></tr></tfoot></table></div><div class="signature-lines"><span>Firma y sello del Coordinador Docente</span><span>Firma y sello del Jefe de Servicio</span></div></section>
+      <section class="card"><h2>Observaciones del jurado</h2>
+        <p class="help">Campo complementario para la revisión digital, fuera de la lista de cotejo original.</p>
+        <div class="stack"><label for="observations">Observaciones</label><textarea id="observations" maxlength="4000" placeholder="Comentarios para el residente (opcional)"></textarea></div>
+        <p class="draft" id="draftStatus">El borrador se conserva en este navegador. Se guarda en Drive al enviar.</p>
+        <div class="actions"><button type="submit" id="reviewButton">Revisar evaluación</button></div>
+      </section>
+    </form>
+    <section class="card" id="reviewSection" hidden tabindex="-1"><h2>Confirme su evaluación</h2><table class="summarytable"><thead><tr><th>INDICADOR</th><th>SI / NO</th><th>NOTA</th></tr></thead><tbody id="reviewRows"></tbody></table><p><strong id="reviewTotal"></strong></p><p id="reviewCategory" class="muted"></p><label class="check"><input id="confirmed" type="checkbox">Confirmo que esta evaluación es de mi autoría y que revisé los puntajes y observaciones.</label><div class="actions"><button type="button" id="sendButton">Enviar y guardar PDF</button><button type="button" id="editButton" class="secondary">Volver a editar</button></div></section>
+    <section id="receipt" class="card" hidden tabindex="-1"><h2 id="receiptTitle"></h2><p id="receiptDetails"></p><p id="receiptScore"></p><div class="actions"><button type="button" id="downloadButton">Descargar mi PDF</button><button type="button" id="retryButton" hidden>Reintentar guardado del PDF</button></div><p id="downloadStatus" role="status" class="help"></p></section>
+    <div class="sticky" id="stickyScore"><span>Indicadores completos <span id="stickyProgress">0/25</span></span><strong id="stickyTotal">0 / 100</strong></div>
+  </section>
+  <footer class="footer">Fuente: Formato de Registro de proyectos investigación 2026 · Lista de cotejo para protocolo de investigación · 25 indicadores · TOTAL 100%. Los puntajes y documentos se guardan en el Drive privado del coordinador.</footer>
+</main>
+<script>
+(function (root) {
+  'use strict';
+  const title = "LISTA DE COTEJO PARA PROTOCOLO DE INVESTIGACIÓN";
+  const version = 'protocolo-registro-2026-1.0';
+  const criteria = [
+  {
+    "id": "portada",
+    "title": "Portada y estética general del documento",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "indice",
+    "title": "Índice (índice de contenido)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "introduccion",
+    "title": "Introducción (1-2 páginas. De lo general a lo particular)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "antecedentes",
+    "title": "Antecedentes (Mínimo 4 referencias actuales 5 años)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "justificacion",
+    "title": "Justificación (Da salida a los parámetros establecidos)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "problema",
+    "title": "Planteamiento del problema (Caracteriza y fundamenta el problema)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "objetivos",
+    "title": "Objetivo general y objetivos específicos (Son congruentes y medibles) + hipótesis (si aplica)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "marco",
+    "title": "Marco teórico o de referencia (De 12 a 20 páginas, con referencias bibliográficas Vancouver.)",
+    "max": 5,
+    "group": 0
+  },
+  {
+    "id": "tipo",
+    "title": "Tipo de estudio",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "area",
+    "title": "Área de estudio",
+    "max": 2,
+    "group": 1
+  },
+  {
+    "id": "poblacion",
+    "title": "Universo y/o población a estudio",
+    "max": 2,
+    "group": 1
+  },
+  {
+    "id": "unidad",
+    "title": "Unidad de análisis",
+    "max": 2,
+    "group": 1
+  },
+  {
+    "id": "muestra",
+    "title": "Muestra y muestreo",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "seleccion",
+    "title": "Criterios de selección",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "variables",
+    "title": "Lista de variables",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "operacionalizacion",
+    "title": "Operacionalización de variables",
+    "max": 5,
+    "group": 1
+  },
+  {
+    "id": "recoleccion",
+    "title": "Procedimiento de recolección de información (fuente, técnica y plan de recolección)",
+    "max": 5,
+    "group": 1
+  },
+  {
+    "id": "confiabilidad",
+    "title": "Confiabilidad y validez del instrumento",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "analisis",
+    "title": "Procesamiento y análisis de los datos",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "etica",
+    "title": "Consideraciones éticas",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "limitaciones",
+    "title": "Limitaciones",
+    "max": 3,
+    "group": 1
+  },
+  {
+    "id": "bibliografia",
+    "title": "Bibliografía (Vancouver)",
+    "max": 6,
+    "group": 2
+  },
+  {
+    "id": "instrumento",
+    "title": "Anexo 1: Instrumento de recolección de información y consentimiento informado (si aplica)",
+    "max": 6,
+    "group": 2
+  },
+  {
+    "id": "cronograma",
+    "title": "Anexos 2: Cronograma de trabajo",
+    "max": 4,
+    "group": 2
+  },
+  {
+    "id": "presupuesto",
+    "title": "Anexos 3: Presupuesto",
+    "max": 4,
+    "group": 2
+  }
+];
+  const groupMax = [40, 40, 20];
+  function calculate(scores) {
+    if (!scores || typeof scores !== 'object') throw new Error('Faltan las notas.');
+    const subtotals = [0, 0, 0];
+    criteria.forEach(c => {
+      const n = scores[c.id];
+      if (typeof n !== 'number' || !Number.isFinite(n) || n < 0 || n > c.max) throw new Error('Revise la nota de ' + c.title + '.');
+      subtotals[c.group] += n;
+    });
+    const total = subtotals.reduce((a, b) => a + b, 0);
+    return {total, note: total, subtotals};
+  }
+  function text(value, label, limit, required) {
+    if (typeof value !== 'string' || value.length > limit || (required && !value.trim())) throw new Error('Revise ' + label + '.');
+    return value.trim();
+  }
+  function validate(payload) {
+    if (!payload || payload.confirmed !== true) throw new Error('Debe confirmar la autoría de la evaluación.');
+    if (payload.rubricVersion && payload.rubricVersion !== version) throw new Error('La lista de cotejo cambió. Recargue el formulario antes de enviar.');
+    const result = calculate(payload.scores);
+    const checks = {}, comments = {};
+    criteria.forEach(c => {
+      const check = (payload.checks || {})[c.id];
+      if (!['SI', 'NO'].includes(check)) throw new Error('Marque SI o NO en ' + c.title + '.');
+      checks[c.id] = check;
+      comments[c.id] = text((payload.comments || {})[c.id] || '', 'las observaciones de ' + c.title, 2000, false);
+    });
+    return Object.assign(result, {
+      rubricVersion: version,
+      evaluator: text(payload.evaluator, 'el nombre del jurado', 150, true),
+      scores: Object.fromEntries(criteria.map(c => [c.id, payload.scores[c.id]])),
+      checks, comments,
+      strengths: text(payload.strengths || '', 'las fortalezas', 4000, false),
+      improvements: text(payload.improvements || '', 'las mejoras prioritarias', 4000, false),
+      observations: text(payload.observations || '', 'las observaciones generales', 4000, false),
+      confirmed: true
+    });
+  }
+  function latest(evaluations) {
+    const map = new Map();
+    evaluations.filter(e => e.status === 'COMPLETE' && e.data.rubricVersion === version).forEach(e => {
+      const key = e.sessionId + ':' + e.jurorId;
+      if (!map.has(key) || e.revision > map.get(key).revision) map.set(key, e);
+    });
+    return Array.from(map.values());
+  }
+  function summarize(evaluations, expected) {
+    const active = latest(evaluations);
+    const averages = {};
+    criteria.forEach(c => { averages[c.id] = active.length ? active.reduce((n, e) => n + e.data.scores[c.id], 0) / active.length : null; });
+    return {received: active.length, pending: Math.max(0, expected - active.length), averages, note: active.length ? active.reduce((n, e) => n + e.data.note, 0) / active.length : null};
+  }
+  function safeCell(value) {
+    return typeof value === 'string' && /^[\s]*[=+@-]/.test(value) ? "'" + value : value;
+  }
+  root.Rubric = {title, version, criteria, groupMax, calculate, validate, latest, summarize, safeCell};
+})(typeof globalThis === 'object' ? globalThis : this);
+</script>
+<script>
+window.DEMO_API = (() => {
+  let evaluation = null;
+  return {
+    getContext: () => ({session: {id: 'demo', resident: 'Residente de prueba', title: 'Protocolo de investigación para una revisión metodológica', program: 'Medicina crítica', tutor: 'Tutor de prueba', date: '2026-10-06', open: true}, juror: {name: 'Jurado de prueba', revision: 1}, evaluation}),
+    submitEvaluation: (token, payload) => { evaluation = {id: 'DEMO-SIN-GUARDADO', status: 'COMPLETE', createdAt: new Date().toISOString(), revision: 1, data: Rubric.validate(payload)}; return evaluation; },
+    downloadPdf: () => { throw new Error('La vista de prueba no genera PDF ni guarda datos en Drive.'); }
+  };
+})();
+</script>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  let token = '', context = null, savedPayload = null, busy = false, draftKey = '', revisionCounter = 0;
+  const api = (name, ...args) => new Promise((resolve, reject) => {
+    if (window.DEMO_API) return Promise.resolve().then(() => window.DEMO_API[name](...args)).then(resolve, reject);
+    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args);
+  });
+  function message(text, kind) {
+    $('message').className = 'status' + (kind ? ' ' + kind : '');
+    $('message').textContent = text;
+    $('message').hidden = false;
+  }
+  function value(id) { return $(id).value; }
+  function payload() {
+    const scores = {}, checks = {};
+    Rubric.criteria.forEach(c => { const raw = value('score-' + c.id); scores[c.id] = raw === '' ? null : Number(raw); checks[c.id] = (document.querySelector('input[name="check-' + c.id + '"]:checked') || {}).value || null; });
+    return {rubricVersion: Rubric.version, evaluator: value('evaluator'), scores, checks, comments: {}, strengths: '', improvements: '', observations: value('observations'), confirmed: true};
+  }
+  function restore(data) {
+    Rubric.criteria.forEach(c => {
+      $('score-' + c.id).value = data.scores && data.scores[c.id] !== null && data.scores[c.id] !== undefined ? data.scores[c.id] : '';
+      ['SI', 'NO'].forEach(check => { $('check-' + c.id + '-' + check).checked = (data.checks || {})[c.id] === check; });
+    });
+    $('observations').value = data.observations || '';
+    updateTotals();
+  }
+  function updateTotals() {
+    let sum = 0, completed = 0; const subtotals = [0, 0, 0];
+    Rubric.criteria.forEach(c => {
+      const input = $('score-' + c.id), raw = input.value, n = Number(raw);
+      if (raw !== '' && Number.isFinite(n) && n >= 0 && n <= c.max) { sum += n; subtotals[c.group] += n; if (document.querySelector('input[name="check-' + c.id + '"]:checked')) completed++; }
+    });
+    $('total').textContent = Number(sum.toFixed(2)); $('tableTotal').textContent = sum.toFixed(2);
+    $('normalized').textContent = 'TOTAL 100%' + (completed < Rubric.criteria.length ? ' · parcial' : '');
+    $('progressBar').style.width = completed / Rubric.criteria.length * 100 + '%';
+    $('progressText').textContent = completed + ' de ' + Rubric.criteria.length + ' indicadores';
+    $('stickyProgress').textContent = completed + '/' + Rubric.criteria.length; $('stickyTotal').textContent = Number(sum.toFixed(2)) + ' / 100';
+    subtotals.forEach((n, group) => { $('subtotal-' + group).textContent = n.toFixed(2); });
+  }
+  function saveDraft() {
+    revisionCounter++;
+    updateTotals();
+    if (context && !context.evaluation && !busy) {
+      try { localStorage.setItem(draftKey, JSON.stringify(payload())); $('draftStatus').textContent = 'Borrador guardado en este navegador · ' + new Date().toLocaleTimeString('es-NI'); }
+      catch (_) { $('draftStatus').textContent = 'Este navegador no permite guardar el borrador. Mantenga abierta esta pestaña hasta enviar.'; }
+    }
+    $('reviewSection').hidden = true; $('confirmed').checked = false;
+  }
+  function setLocked(locked) {
+    $('evaluationForm').querySelectorAll('input,textarea,button').forEach(el => { el.disabled = locked; });
+    $('sendButton').disabled = locked; $('editButton').disabled = locked;
+  }
+  function renderCriteria() {
+    const container = $('criteria'); container.replaceChildren();
+    Rubric.criteria.forEach((c, index) => {
+      const row = document.createElement('tr');
+      const indicator = row.insertCell(); indicator.textContent = c.title;
+      row.insertCell().textContent = c.max + '%';
+      ['SI', 'NO'].forEach(check => {
+        const cell = row.insertCell(), input = document.createElement('input');
+        input.type = 'radio'; input.name = 'check-' + c.id; input.id = 'check-' + c.id + '-' + check; input.value = check; input.required = true;
+        input.setAttribute('aria-label', check + ': ' + c.title); cell.appendChild(input);
+      });
+      const cell = row.insertCell(), input = document.createElement('input');
+      input.type = 'number'; input.id = 'score-' + c.id; input.min = '0'; input.max = c.max; input.step = 'any'; input.required = true; input.inputMode = 'decimal';
+      input.setAttribute('aria-label', 'NOTA: ' + c.title + ', máximo ' + c.max); cell.appendChild(input); container.appendChild(row);
+      const next = Rubric.criteria[index + 1];
+      if (!next || next.group !== c.group) {
+        const subtotal = document.createElement('tr'); subtotal.className = 'subtotal';
+        const label = document.createElement('th'); label.scope = 'row'; label.textContent = 'SUB TOTAL'; subtotal.appendChild(label);
+        subtotal.insertCell().textContent = Rubric.groupMax[c.group] + '%'; subtotal.insertCell(); subtotal.insertCell();
+        const score = subtotal.insertCell(); score.id = 'subtotal-' + c.group; score.textContent = '0.00'; container.appendChild(subtotal);
+      }
+    });
+  }
+  function receipt(evaluation) {
+    context.evaluation = evaluation; savedPayload = evaluation.data; restore(evaluation.data); setLocked(true);
+    $('reviewSection').hidden = true; $('receipt').hidden = false;
+    const complete = evaluation.status === 'COMPLETE';
+    if (window.DEMO_API) {
+      $('receiptTitle').textContent = 'Evaluación calculada en la vista de prueba';
+      $('receiptDetails').textContent = 'Esta vista permite comprobar la lista de cotejo. No guarda en Drive ni genera PDF.';
+      $('receiptScore').textContent = evaluation.data.total.toFixed(2) + ' / 100 · SUB TOTAL: ' + evaluation.data.subtotals.map((n, i) => n.toFixed(2) + '/' + Rubric.groupMax[i]).join(' · ');
+      $('downloadButton').hidden = true; $('retryButton').hidden = true;
+      message('Prueba terminada. Los datos no se han guardado en Google Drive.', 'pending');
+      $('receipt').focus(); $('receipt').scrollIntoView({behavior: 'smooth', block: 'center'});
+      return;
+    }
+    $('receiptTitle').textContent = complete ? 'Evaluación guardada' : 'Puntajes registrados; PDF pendiente';
+    $('receiptDetails').textContent = complete ? 'Sus puntajes y el PDF están guardados en el Drive del coordinador. Puede descargar su copia.' : 'Sus puntajes están registrados. Reintente para completar el PDF sin duplicar la evaluación.';
+    $('receiptScore').textContent = evaluation.data.total.toFixed(2) + ' / 100 · SUB TOTAL: ' + evaluation.data.subtotals.map((n, i) => n.toFixed(2) + '/' + Rubric.groupMax[i]).join(' · ');
+    $('downloadButton').hidden = !complete; $('retryButton').hidden = complete;
+    message(complete ? 'Guardado confirmado · ' + evaluation.id : 'El guardado está incompleto. Falta generar el PDF.', complete ? '' : 'pending');
+    if (complete) { try { localStorage.removeItem(draftKey); } catch (_) {} }
+    $('receipt').focus(); $('receipt').scrollIntoView({behavior: 'smooth', block: 'center'});
+  }
+  async function send() {
+    if (busy) return;
+    if (!context.evaluation && !$('confirmed').checked) { message('Confirme la autoría antes de enviar.', 'error'); $('confirmed').focus(); return; }
+    busy = true; setLocked(true); $('retryButton').disabled = true;
+    message('Guardando los puntajes y generando su PDF. Mantenga esta pestaña abierta…');
+    try { receipt(await api('submitEvaluation', token, savedPayload)); }
+    catch (error) {
+      message(error.message || 'No fue posible confirmar el guardado. Su borrador se conserva. Reintente con este mismo enlace.', 'error');
+      if (!context.evaluation) setLocked(false);
+    } finally { busy = false; $('retryButton').disabled = false; }
+  }
+  async function download() {
+    $('downloadButton').disabled = true; $('downloadStatus').textContent = 'Preparando descarga…';
+    try {
+      const file = await api('downloadPdf', token);
+      const bytes = Uint8Array.from(atob(file.base64), c => c.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], {type: 'application/pdf'}));
+      const link = document.createElement('a'); link.href = url; link.download = file.name; document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      $('downloadStatus').textContent = 'Descarga preparada. Si su navegador solicita permiso, permita descargar el PDF.';
+    } catch (error) { $('downloadStatus').textContent = error.message || 'No se pudo descargar. Vuelva a intentarlo.'; }
+    finally { $('downloadButton').disabled = false; }
+  }
+  async function initialize() {
+    $('reloadButton').hidden = true;
+    try {
+      let locationData;
+      if (window.DEMO_API) locationData = {hash: 'token=' + 'a'.repeat(64), parameter: {}};
+      else locationData = await new Promise(resolve => google.script.url.getLocation(resolve));
+      token = new URLSearchParams((locationData.hash || '').replace(/^#/, '')).get('token') || (locationData.parameter || {}).token || '';
+      if (!/^[a-f0-9]{64}$/.test(token)) throw new Error('Abra el enlace individual que le compartió el coordinador.');
+      context = await api('getContext', token); draftKey = 'facmed-draft:' + Rubric.version + ':' + token;
+      renderCriteria();
+      const session = context.session;
+      $('protocolTitle').textContent = session.title;
+      ['resident', 'program', 'tutor'].forEach(id => { $(id).textContent = session[id]; });
+      $('sessionDate').textContent = session.date; $('evaluator').value = context.juror.name;
+      $('revisionText').textContent = 'Revisión ' + context.juror.revision + ' · Una evaluación por enlace.';
+      $('evaluationApp').hidden = false;
+      if (context.evaluation && context.evaluation.data.rubricVersion !== Rubric.version) { setLocked(true); message('Este enlace tiene una evaluación de la rúbrica anterior. Solicite un nuevo enlace para la lista de cotejo de protocolo.', 'pending'); }
+      else if (context.evaluation) receipt(context.evaluation);
+      else {
+        try { const draft = localStorage.getItem(draftKey); if (draft) restore(JSON.parse(draft)); } catch (_) {}
+        if (!session.open) { setLocked(true); message('Esta sesión está cerrada. Contacte al coordinador.', 'pending'); }
+        else $('message').hidden = true;
+      }
+    } catch (error) { message(error.message || 'No fue posible cargar la evaluación. Compruebe su conexión.', 'error'); $('reloadButton').hidden = false; }
+  }
+  $('evaluationForm').addEventListener('input', saveDraft);
+  $('evaluationForm').addEventListener('submit', event => {
+    event.preventDefault();
+    try {
+      savedPayload = Rubric.validate(payload());
+      const rows = $('reviewRows'); rows.replaceChildren();
+      Rubric.criteria.forEach(c => {
+        const row = rows.insertRow(); row.insertCell().textContent = c.title; row.insertCell().textContent = savedPayload.checks[c.id]; row.insertCell().textContent = savedPayload.scores[c.id] + ' / ' + c.max;
+      });
+      $('reviewTotal').textContent = 'TOTAL: ' + savedPayload.total.toFixed(2) + ' / 100';
+      $('reviewCategory').textContent = 'SUB TOTAL: ' + savedPayload.subtotals.map((n, i) => n.toFixed(2) + ' / ' + Rubric.groupMax[i]).join(' · ');
+      $('confirmed').checked = false; $('reviewSection').hidden = false; $('reviewSection').focus(); $('reviewSection').scrollIntoView({behavior: 'smooth'});
+    } catch (error) { message(error.message, 'error'); }
+  });
+  $('editButton').addEventListener('click', () => { $('reviewSection').hidden = true; $('confirmed').checked = false; $('reviewButton').focus(); });
+  $('sendButton').addEventListener('click', send); $('retryButton').addEventListener('click', send);
+  $('downloadButton').addEventListener('click', download); $('reloadButton').addEventListener('click', initialize);
+  window.addEventListener('beforeunload', event => { if (busy) { event.preventDefault(); event.returnValue = ''; } });
+  initialize();
+})();
+</script>
+
+</body></html>

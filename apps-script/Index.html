@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><?!= include_('Styles'); ?></head>
+<body>
+<header class="topbar"><div class="topbar-inner"><span class="brand">FACMED · PROTOCOLOS</span><span class="tag">Evaluación por jurado</span></div></header>
+<main>
+  <div class="eyebrow">Revisión académica</div>
+  <h1>Lista de cotejo para<br>protocolo de investigación</h1>
+  <div id="message" role="status" aria-live="polite" class="status loading"><span class="dot"></span>Comprobando su enlace individual…</div>
+  <button id="reloadButton" class="secondary" hidden>Volver a intentar</button>
+  <section id="evaluationApp" hidden>
+    <section class="card intro" aria-labelledby="sessionTitle">
+      <div><h2 id="sessionTitle">Protocolo</h2><p id="protocolTitle"></p>
+        <dl class="meta"><div><dt>Residente</dt><dd id="resident"></dd></div><div><dt>Programa</dt><dd id="program"></dd></div><div><dt>Tutor</dt><dd id="tutor"></dd></div><div><dt>Fecha de revisión</dt><dd id="sessionDate"></dd></div></dl>
+      </div>
+      <aside class="scorebox"><span class="pointlabel">NOTA TOTAL</span><div class="scorebig"><span id="total">0</span><span style="font-size:18px;font-weight:400"> / 100</span></div><div id="normalized" class="muted">TOTAL 100%</div><div class="progress"><span id="progressBar" style="width:0%"></span></div><span id="progressText" class="help">0 de 25 indicadores</span></aside>
+    </section>
+    <form id="evaluationForm">
+      <section class="card"><label for="evaluator">Jurado evaluador</label><input id="evaluator" name="evaluator" maxlength="150" required readonly><p class="help">Su enlace está asociado a este nombre. Si no corresponde, solicite el enlace correcto.</p><p id="revisionText" class="help"></p></section>
+      <div class="eyebrow" style="margin-top:30px">LISTA DE COTEJO PARA PROTOCOLO DE INVESTIGACIÓN</div>
+      <p class="muted">Marque SI o NO y registre la NOTA de cada indicador. La nota se ingresa por separado, de 0 al porcentaje indicado.</p>
+      <section class="card checklist-card"><div class="table-scroll"><table class="checklist"><thead><tr><th scope="col">INDICADOR</th><th scope="col">%</th><th scope="col">SI</th><th scope="col">NO</th><th scope="col">NOTA</th></tr></thead><tbody id="criteria"></tbody><tfoot><tr><th scope="row">TOTAL</th><td>100%</td><td></td><td></td><td id="tableTotal">0.00</td></tr></tfoot></table></div><div class="signature-lines"><span>Firma y sello del Coordinador Docente</span><span>Firma y sello del Jefe de Servicio</span></div></section>
+      <section class="card"><h2>Observaciones del jurado</h2>
+        <p class="help">Campo complementario para la revisión digital, fuera de la lista de cotejo original.</p>
+        <div class="stack"><label for="observations">Observaciones</label><textarea id="observations" maxlength="4000" placeholder="Comentarios para el residente (opcional)"></textarea></div>
+        <p class="draft" id="draftStatus">El borrador se conserva en este navegador. Se guarda en Drive al enviar.</p>
+        <div class="actions"><button type="submit" id="reviewButton">Revisar evaluación</button></div>
+      </section>
+    </form>
+    <section class="card" id="reviewSection" hidden tabindex="-1"><h2>Confirme su evaluación</h2><table class="summarytable"><thead><tr><th>INDICADOR</th><th>SI / NO</th><th>NOTA</th></tr></thead><tbody id="reviewRows"></tbody></table><p><strong id="reviewTotal"></strong></p><p id="reviewCategory" class="muted"></p><label class="check"><input id="confirmed" type="checkbox">Confirmo que esta evaluación es de mi autoría y que revisé los puntajes y observaciones.</label><div class="actions"><button type="button" id="sendButton">Enviar y guardar PDF</button><button type="button" id="editButton" class="secondary">Volver a editar</button></div></section>
+    <section id="receipt" class="card" hidden tabindex="-1"><h2 id="receiptTitle"></h2><p id="receiptDetails"></p><p id="receiptScore"></p><div class="actions"><button type="button" id="downloadButton">Descargar mi PDF</button><button type="button" id="retryButton" hidden>Reintentar guardado del PDF</button></div><p id="downloadStatus" role="status" class="help"></p></section>
+    <div class="sticky" id="stickyScore"><span>Indicadores completos <span id="stickyProgress">0/25</span></span><strong id="stickyTotal">0 / 100</strong></div>
+  </section>
+  <footer class="footer">Fuente: Formato de Registro de proyectos investigación 2026 · Lista de cotejo para protocolo de investigación · 25 indicadores · TOTAL 100%. Los puntajes y documentos se guardan en el Drive privado del coordinador.</footer>
+</main>
+<?!= include_('Rubric'); ?>
+<?!= include_('Client'); ?>
+</body></html>
